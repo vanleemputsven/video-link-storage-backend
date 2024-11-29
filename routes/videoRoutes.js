@@ -18,6 +18,9 @@ router.get("/", authenticate(), async (req, res) => {
 
 // Route: Voeg een nieuwe video toe (inclusief upload naar Cloudinary)
 router.post("/", authenticate("lecturer"), upload.single("video"), async (req, res) => {
+  console.log("Request body:", req.body);
+  console.log("Uploaded file:", req.file);
+  
   const { title, description } = req.body;
 
   if (!title || !req.file) {
@@ -26,6 +29,7 @@ router.post("/", authenticate("lecturer"), upload.single("video"), async (req, r
 
   try {
     const fileUrl = req.file.path; // Cloudinary-URL
+    console.log("Generated file URL:", fileUrl);
     const newVideo = new Video({ title, description, fileUrl });
     await newVideo.save();
     res.status(201).json(newVideo);
