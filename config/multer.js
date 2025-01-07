@@ -8,8 +8,8 @@ console.log("Cloudinary instance:", cloudinary.config());
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: "video-link-storage", // Map in Cloudinary waar video's worden opgeslagen
-    resource_type: "video", // Specificeer dat het om video's gaat
+    folder: "video-link-storage", 
+    resource_type: "video", 
   },
 });
 

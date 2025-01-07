@@ -5,6 +5,7 @@ const User = require("../models/User");
 console.log(User);
 const router = express.Router();
 console.log("Path to User model resolved:", require.resolve("../models/User"));
+
 // Validatie functie
 const validateInput = (email, password) => {
   if (!email || !password) {
@@ -82,5 +83,81 @@ router.post("/login", async (req, res) => {
     res.status(500).json({ message: "Fout bij inloggen.", error: err.message });
   }
 });
+
+
+
+/* ===========================
+   NIEUW: beheer-account-routes
+   =========================== */
+   const authenticate = require("../middelware/authMiddelware");
+
+   // Route: Wijzig het eigen wachtwoord
+   router.put("/manage/password", authenticate(), async (req, res) => {
+     try {
+       const userId = req.user.id;
+       const { newPassword } = req.body;
+   
+       if (!newPassword || newPassword.length < 6) {
+         return res
+           .status(400)
+           .json({ message: "Nieuw wachtwoord moet minimaal 6 tekens hebben." });
+       }
+   
+       const user = await User.findById(userId);
+       if (!user) {
+         return res.status(404).json({ message: "Gebruiker niet gevonden." });
+       }
+   
+       // Update het wachtwoord
+       user.password = newPassword;
+       await user.save();
+   
+       res.json({ message: "Wachtwoord succesvol gewijzigd." });
+     } catch (err) {
+       res
+         .status(500)
+         .json({ message: "Fout bij wijzigen van wachtwoord.", error: err.message });
+     }
+   });
+   
+   // Route: Verwijder het eigen account
+   router.delete("/manage/account", authenticate(), async (req, res) => {
+     try {
+       const userId = req.user.id;
+   
+       const user = await User.findById(userId);
+       if (!user) {
+         return res.status(404).json({ message: "Gebruiker niet gevonden." });
+       }
+   
+       await user.remove();
+       res.json({ message: "Account succesvol verwijderd." });
+     } catch (err) {
+       res
+         .status(500)
+         .json({ message: "Fout bij verwijderen van account.", error: err.message });
+     }
+   });
+
+
+   router.get("/manage/account-data", authenticate(), async (req, res) => {
+    try {
+      const userId = req.user.id;
+      // Haal user op, sluit password en __v uit:
+      const user = await User.findById(userId).select("-password -__v");
+      if (!user) {
+        return res.status(404).json({ message: "Gebruiker niet gevonden." });
+      }
+  
+      // Stuur de user-data terug als JSON
+      res.json(user);
+    } catch (err) {
+      res.status(500).json({
+        message: "Fout bij het ophalen van accountgegevens.",
+        error: err.message,
+      });
+    }
+  });
+
 
 module.exports = router;

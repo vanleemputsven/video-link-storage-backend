@@ -9,8 +9,8 @@ const connectDB = async () => {
     console.log("Database verbonden!");
   } catch (err) {
     console.error("Fout bij verbinden met database:", err.message);
-    process.exit(1); // Stop het proces bij een fout
+    process.exit(1); // stop het proces bij een fout
   }
 };
 
-module.exports = connectDB; // Zorg ervoor dat connectDB correct wordt geëxporteerd
+module.exports = connectDB; 
