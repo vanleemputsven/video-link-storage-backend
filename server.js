@@ -13,7 +13,7 @@ const app = express();
 // Middleware
 app.use(express.json());
 app.use(cors({
-  origin: "http://localhost:3000", // Vervang door jouw frontend URL
+  origin: ["http://localhost:3000", "https://video-link-storage.vercel.app/"], // Vervang door jouw frontend URL
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   credentials: true,
 }));
