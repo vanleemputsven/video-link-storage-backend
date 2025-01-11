@@ -17,7 +17,7 @@ app.use(cors({
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   credentials: true,
 }));
-
+app.options("*", cors());
 // Verbind met de database
 connectDB();
 
